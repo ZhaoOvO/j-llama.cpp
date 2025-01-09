@@ -6,7 +6,7 @@ include(FetchContent)
 
 set(BUILD_SHARED_LIBS ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
-set(CMAKE_C_COMPILER_FORCED ON)
+set(CMAKE_COMPILER_FORCED ON)
 
 option(LLAMA_VERBOSE	"llama: verbose output"		OFF)
 
