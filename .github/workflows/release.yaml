@@ -94,7 +94,7 @@ jobs:
 
   build-win-native:
     name: Build ${{ matrix.target.os }}-${{ matrix.target.arch }}
-    runs-on: windows-2022
+    runs-on: windows-latest
     strategy:
       fail-fast: false
       matrix:
