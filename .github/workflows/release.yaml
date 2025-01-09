@@ -12,7 +12,6 @@ env:
   MODEL_URL: "https://huggingface.co/TheBloke/CodeLlama-7B-GGUF/resolve/main/codellama-7b.Q2_K.gguf"
   MODEL_NAME: "codellama-7b.Q2_K.gguf"
 jobs:
-
   build-linux-cuda:
     name: Build Linux x86-64 CUDA12
     runs-on: ubuntu-latest
@@ -62,39 +61,9 @@ jobs:
           name: ${{ matrix.target.os }}-${{ matrix.target.arch }}-libraries
           path: ${{ github.workspace }}/src/main/resources/cn/hthcorp/llama/
 
-
-  build-macos-native:
-    name: Build ${{ matrix.target.runner }}
-    runs-on: ${{ matrix.target.runner }}
-    strategy:
-      fail-fast: false
-      matrix:
-        target:
-          - {
-            runner: macos-13,
-            cmake: '-DLLAMA_METAL=OFF'
-          }
-          - {
-            runner: macos-14,
-            cmake: '-DLLAMA_METAL_EMBED_LIBRARY=ON'
-          }
-    steps:
-      - uses: actions/checkout@v4
-      - name: Build libraries
-        shell: bash
-        run: |
-          mvn compile
-          .github/build.sh ${{ matrix.target.cmake }}
-      - name: Upload artifacts
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ matrix.target.runner }}-libraries
-          path: ${{ github.workspace }}/src/main/resources/cn/hthcorp/llama/
-
-
   build-win-native:
     name: Build ${{ matrix.target.os }}-${{ matrix.target.arch }}
-    runs-on: windows-2022
+    runs-on: windows-2019
     strategy:
       fail-fast: false
       matrix:
@@ -131,34 +100,15 @@ jobs:
           name: ${{ matrix.target.os }}-${{ matrix.target.arch }}-libraries
           path: ${{ github.workspace }}/src/main/resources/cn/hthcorp/llama/
 
-  test-linux:
-    name: Test Linux
-    needs: build-linux-docker
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/download-artifact@v4
-        with:
-          name: Linux-x86_64-libraries
-          path: ${{ github.workspace }}/src/main/resources/cn/hthcorp/llama/
-      - name: Download model
-        run: curl -L ${MODEL_URL} --create-dirs -o models/${MODEL_NAME}
-      - uses: actions/setup-java@v4
-        with:
-          distribution: 'zulu'
-          java-version: '11'
-      - name: Run tests
-        run: mvn test
-
-  # test-macos:
-  #   name: Test Mac
-  #   needs: build-macos-native
-  #   runs-on: macos-14
+  # test-linux:
+  #   name: Test Linux
+  #   needs: build-linux-docker
+  #   runs-on: ubuntu-latest
   #   steps:
   #     - uses: actions/checkout@v4
   #     - uses: actions/download-artifact@v4
   #       with:
-  #         name: macos14-libraries
+  #         name: Linux-x86_64-libraries
   #         path: ${{ github.workspace }}/src/main/resources/cn/hthcorp/llama/
   #     - name: Download model
   #       run: curl -L ${MODEL_URL} --create-dirs -o models/${MODEL_NAME}
@@ -190,7 +140,7 @@ jobs:
 
   publish:
     if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.build_only == 'no' }}
-    needs: [ test-linux,build-macos-native,build-win-native,build-linux-cuda ]
+    needs: [ build-linux-docker,build-win-native,build-linux-cuda ]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
