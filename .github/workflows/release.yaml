@@ -90,15 +90,15 @@ jobs:
           }
     steps:
       - uses: actions/checkout@v4
-      - name: Build libraries
-        uses: ChristopheLav/windows-sdk-install@v1
+      - name: Windows SDK Install
+        uses: ChristopheLav/windows-sdk-install@v1.0.3
         with:
           version-sdk: 26100
           features: 'OptionId.UWPCPP,OptionId.DesktopCPParm64'
+      - name: Build libraries
         shell: cmd
         run: |
           .github\build.bat ${{ matrix.target.cmake }} -DOS_NAME=${{ matrix.target.os }} -DOS_ARCH=${{ matrix.target.arch }}
-          
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
         with:
