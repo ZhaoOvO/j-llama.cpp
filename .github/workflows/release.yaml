@@ -97,13 +97,13 @@ jobs:
       #     Start-Process -Wait sdksetup.exe -ArgumentList "/q", "/norestart", "/features", "OptionId.WindowsDesktopSoftwareDevelopmentKit", "OptionId.NetFxSoftwareDevelopmentKit"
       
       - uses: actions/checkout@v4
-      - uses: GuillaumeFalourd/setup-windows10-sdk-action@v1.11
+      - uses: GuillaumeFalourd/setup-windows10-sdk-action@v2.4
         with:
           sdk-version: 26100
       - name: Build libraries
         shell: cmd
         run: |
-          .github\build.bat ${{ matrix.target.cmake }} -DOS_NAME=${{ matrix.target.os }} -DOS_ARCH=${{ matrix.target.arch }}
+          .github\build.bat -DCMAKE_SYSTEM_VERSION=10.0.26100.0 ${{ matrix.target.cmake }} -DOS_NAME=${{ matrix.target.os }} -DOS_ARCH=${{ matrix.target.arch }}
           
       - name: Upload artifacts
         uses: actions/upload-artifact@v4
