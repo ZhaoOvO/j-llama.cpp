@@ -79,21 +79,23 @@ jobs:
             arch: aarch64,
             cmake: '-G "Visual Studio 17 2022" -A "ARM64"'
           }
-          - {
-            os: Windows,
-            arch: x86,
-            cmake: '-G "Visual Studio 17 2022" -A "Win32"'
-          }
-          - {
-            os: Windows,
-            arch: arm,
-            cmake: '-G "Visual Studio 17 2022" -A "ARM"'
-          }
+          # - {
+          #   os: Windows,
+          #   arch: x86,
+          #   cmake: '-G "Visual Studio 17 2022" -A "Win32"'
+          # }
+          # - {
+          #   os: Windows,
+          #   arch: arm,
+          #   cmake: '-G "Visual Studio 17 2022" -A "ARM"'
+          # }
     steps:
       - uses: actions/checkout@v4
-      - uses: GuillaumeFalourd/setup-windows10-sdk-action@v2.4
+      - uses: ChristopheLav/windows-sdk-install@v1
         with:
-          sdk-version: 26100
+          version-sdk: 26100
+          features: 'OptionId.UWPCPP,OptionId.DesktopCPParm64'
+          
       - name: Build libraries
         shell: cmd
         run: |
