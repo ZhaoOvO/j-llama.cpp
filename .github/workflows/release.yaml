@@ -89,14 +89,17 @@ jobs:
             cmake: '-G "Visual Studio 17 2022" -A "ARM"'
           }
     steps:
-      - name: Install Windows SDK 10.0.26100.0
-        if: ${{ matrix.target.arch == 'arm' }}
-        shell: powershell
-        run: |
-          Invoke-WebRequest -Method Get -Uri https://go.microsoft.com/fwlink/?linkid=2286561 -OutFile sdksetup.exe -UseBasicParsing
-          Start-Process -Wait sdksetup.exe -ArgumentList "/q", "/norestart", "/features", "OptionId.WindowsDesktopSoftwareDevelopmentKit", "OptionId.NetFxSoftwareDevelopmentKit"
+      # - name: Install Windows SDK 10.0.26100.0
+      #   if: ${{ matrix.target.arch == 'arm' }}
+      #   shell: powershell
+      #   run: |
+      #     Invoke-WebRequest -Method Get -Uri https://go.microsoft.com/fwlink/?linkid=2286561 -OutFile sdksetup.exe -UseBasicParsing
+      #     Start-Process -Wait sdksetup.exe -ArgumentList "/q", "/norestart", "/features", "OptionId.WindowsDesktopSoftwareDevelopmentKit", "OptionId.NetFxSoftwareDevelopmentKit"
       
       - uses: actions/checkout@v4
+      - uses: GuillaumeFalourd/setup-windows10-sdk-action@v1.11
+        with:
+          sdk-version: 26100
       - name: Build libraries
         shell: cmd
         run: |
