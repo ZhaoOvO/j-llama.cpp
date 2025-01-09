@@ -90,6 +90,11 @@ jobs:
           }
     steps:
       - uses: actions/checkout@v4
+      - name: Install Windows SDK 10.0.26100.0
+        shell: powershell
+        if: ${{ matrix.target.arch == 'arm' }}
+        run: |
+          Invoke-WebRequest -Method Get -Uri https://go.microsoft.com/fwlink/?linkid=2286561 -OutFile sdksetup.exe -UseBasicParsing Start-Process -Wait sdksetup.exe -ArgumentList "/q", "/norestart", "/features", "OptionId.WindowsDesktopSoftwareDevelopmentKit", "OptionId.NetFxSoftwareDevelopmentKit"
       - name: Build libraries
         shell: cmd
         run: |
