@@ -12,23 +12,23 @@ include(FetchContent)
 set(BUILD_SHARED_LIBS ON)
 set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 
-option(LLAMA_VERBOSE	"llama: verbose output"		OFF)
+option(LLAMA_VERBOSE "llama: verbose output" OFF)
 
 #################### json ####################
 
 FetchContent_Declare(
-	json
-	GIT_REPOSITORY https://github.com/nlohmann/json
-	GIT_TAG        v3.11.3
+    json
+    GIT_REPOSITORY https://github.com/nlohmann/json
+    GIT_TAG    v3.11.3
 )
 FetchContent_MakeAvailable(json)
 
 #################### llama.cpp ####################
 
 FetchContent_Declare(
-	llama.cpp
-	GIT_REPOSITORY https://github.com/ggerganov/llama.cpp.git
-	GIT_TAG        b3534
+    llama.cpp
+    GIT_REPOSITORY https://github.com/ggerganov/llama.cpp.git
+    GIT_TAG    b3534
 )
 FetchContent_MakeAvailable(llama.cpp)
 
@@ -38,7 +38,7 @@ FetchContent_MakeAvailable(llama.cpp)
 if(NOT DEFINED OS_NAME)
     find_package(Java REQUIRED)
     find_program(JAVA_EXECUTABLE NAMES java)
-	execute_process(
+    execute_process(
       COMMAND ${JAVA_EXECUTABLE} -cp ${CMAKE_SOURCE_DIR}/target/classes cn.hthcorp.llama.OSInfo --os
       OUTPUT_VARIABLE OS_NAME
       OUTPUT_STRIP_TRAILING_WHITESPACE
@@ -107,14 +107,14 @@ target_compile_definitions(jllama PRIVATE
 )
 
 if(OS_NAME STREQUAL "Windows")
-	set_target_properties(jllama llama ggml PROPERTIES
-	  RUNTIME_OUTPUT_DIRECTORY_DEBUG ${JLLAMA_DIR}
-	  RUNTIME_OUTPUT_DIRECTORY_RELEASE ${JLLAMA_DIR}
-	)
+    set_target_properties(jllama llama ggml PROPERTIES
+        RUNTIME_OUTPUT_DIRECTORY_DEBUG ${JLLAMA_DIR}
+        RUNTIME_OUTPUT_DIRECTORY_RELEASE ${JLLAMA_DIR}
+    )
 else()
-	set_target_properties(jllama llama ggml PROPERTIES
-	  LIBRARY_OUTPUT_DIRECTORY ${JLLAMA_DIR}
-	)
+    set_target_properties(jllama llama ggml PROPERTIES
+        LIBRARY_OUTPUT_DIRECTORY ${JLLAMA_DIR}
+    )
 endif()
 
 if (LLAMA_METAL AND NOT LLAMA_METAL_EMBED_LIBRARY)
