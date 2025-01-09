@@ -1,4 +1,4 @@
-name: Release to Maven Central
+name: CI
 on:
   workflow_dispatch:
     inputs:
@@ -35,8 +35,8 @@ jobs:
       fail-fast: false
       matrix:
         target:
-         - {
-           os: Linux,
+          - {
+            os: Linux,
             arch: x86_64,
             image: dockcross-manylinux2014-x64,
           }
@@ -61,6 +61,7 @@ jobs:
         with:
           name: ${{ matrix.target.os }}-${{ matrix.target.arch }}-libraries
           path: ${{ github.workspace }}/src/main/resources/cn/hthcorp/llama/
+
 
   build-macos-native:
     name: Build ${{ matrix.target.runner }}
@@ -89,6 +90,7 @@ jobs:
         with:
           name: ${{ matrix.target.runner }}-libraries
           path: ${{ github.workspace }}/src/main/resources/cn/hthcorp/llama/
+
 
   build-win-native:
     name: Build ${{ matrix.target.os }}-${{ matrix.target.arch }}
@@ -148,43 +150,43 @@ jobs:
       - name: Run tests
         run: mvn test
 
-   test-macos:
-     name: Test Mac
-     needs: build-macos-native
-     runs-on: macos-14
-     steps:
-       - uses: actions/checkout@v4
-       - uses: actions/download-artifact@v4
-         with:
-           name: macos14-libraries
-           path: ${{ github.workspace }}/src/main/resources/cn/hthcorp/llama/
-       - name: Download model
-         run: curl -L ${MODEL_URL} --create-dirs -o models/${MODEL_NAME}
-       - uses: actions/setup-java@v4
-         with:
-           distribution: 'zulu'
-           java-version: '11'
-       - name: Run tests
-         run: mvn test
+  test-macos:
+    name: Test Mac
+    needs: build-macos-native
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: macos14-libraries
+          path: ${{ github.workspace }}/src/main/resources/cn/hthcorp/llama/
+      - name: Download model
+        run: curl -L ${MODEL_URL} --create-dirs -o models/${MODEL_NAME}
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '11'
+      - name: Run tests
+        run: mvn test
 
-    test-windows:
-     name: Test Windows
-     needs: build-win-native
-     runs-on: windows-latest
-     steps:
-       - uses: actions/checkout@v4
-       - uses: actions/download-artifact@v4
-         with:
-           name: Windows-x86_64-libraries
-           path: ${{ github.workspace }}/src/main/resources/cn/hthcorp/llama/
-       - name: Download model
-         run: curl -L $env:MODEL_URL --create-dirs -o models/$env:MODEL_NAME
-       - uses: actions/setup-java@v4
-         with:
-           distribution: 'zulu'
-           java-version: '11'
-       - name: Run tests
-         run: mvn test
+  test-windows:
+    name: Test Windows
+    needs: build-win-native
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: Windows-x86_64-libraries
+          path: ${{ github.workspace }}/src/main/resources/cn/hthcorp/llama/
+      - name: Download model
+        run: curl -L $env:MODEL_URL --create-dirs -o models/$env:MODEL_NAME
+      - uses: actions/setup-java@v4
+        with:
+          distribution: 'zulu'
+          java-version: '11'
+      - name: Run tests
+        run: mvn test
 
   publish:
     if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.build_only == 'no' }}
